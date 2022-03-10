@@ -1,0 +1,12 @@
+---
+title: "Welcome!"
+author: "Nathan Bana"
+date: "3/10/2022"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+My name is Nathan, and I'm a Master's student in Cognitive Science at the University of Neuchâtel. I'll be using this repository to store my data practicals for an intro to data science course.
