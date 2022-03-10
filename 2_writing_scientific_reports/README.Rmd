@@ -1,0 +1,38 @@
+---
+title: "My first report"
+author: "Nathan Bana"
+date: "(`r format(Sys.time(), '%d %B, %Y')`)"
+output: github_document
+bibliography: 'references.bib'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Goal
+The **goal** of this report is simply to show off my *R Markdown* skills. Therefore, it will make no sense at all. Sorry in advance :).
+
+## List
+Here is a list, to show you that I can create a list:
+
+* Are
+* you
+* having
+* fun
+* ?
+
+## Picture
+Here is a cute pic of a kitten and a duck, to show you that I can insert a picture. And also because it's so freaking cute.
+
+![](https://assets.rbl.ms/4160036/980x.jpg)
+
+## Data set
+Here is a nice table of the `cars` data set:
+
+```{r cars}
+library(knitr)
+kable(cars)
+```
+## References
+To conclude this report, here is a random scientific reference by @blasi2019 to show that I'm a master of the BibTeX technology:
