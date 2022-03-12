@@ -1,0 +1,84 @@
+---
+title: "Report 2"
+author: "Nathan Bana"
+date: "(`r format(Sys.time(), '%d %B, %Y')`)"
+output: 
+  github_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Dataset 1
+
+For our first dataset, let's use R's pre-loaded `cars`:
+
+```{r cars}
+library(knitr)
+kable(head(cars))
+```
+Next, let's use the `str()` function to see what R data types these 2 variables are:
+
+```{r cars-data-type}
+str(cars)
+```
+We can see that both variables are numeric vectors. Now, let's take a look at the R Documentation about `cars` to figure out what kind of statistical variables there is. Here is what the description says:
+
+>>> "The data give the speed of cars and the distances taken to stop."
+
+This means that both variables are quantitative continuous.
+
+# Dataset 2
+
+The second dataset we will be exploring is made available on https://www.kaggle.com/. It contains information on the colors of every official LEGO set. First, let's import the data and display it in a nice table:
+
+```{r colors}
+colors <- read.csv("colors.csv")
+kable(head(colors))
+```
+The meaning of the first 2 variables is pretty straightforward, hopefully. As for the last one, it indicates whether or not the given color is transparent. It is clear that all these variables are qualitative nominal, statistically speaking. What about the R data types? Let's call the `str()` function and take a look:
+
+```{r colors-data-type}
+str(colors)
+```
+By default, R has set the first column to integer, and the next 3 to character. While this choice makes sense for columns 2 and 3, I don't think it does for the first and last column. The id is really just a label, so it would make more sense to set it to string. As for the last column, it only contains "true" and "false" values, so it's better to set it to logical. Let's do the changes:
+
+```{r colors-changes}
+colors$is_trans <- as.logical(toupper(colors$is_trans))
+colors$id <- as.character(colors$id)
+str(colors)
+```
+Much better.
+
+# Dataset 3
+
+Our final dataset also comes from https://www.kaggle.com/. It contains information on 5000 metal bands. The data was scraped from the website http://metalstorm.net/ in 2017. Once again, let's import the data and display it in a nice table:
+
+```{r metal}
+metal <- read.csv("metal_bands_2017.csv")
+kable(head(metal))
+```
+Here is the list of the variables:
+
+1. the name of the band
+2. how many fans the band has on metalstorm.net
+3. when the band formed
+4. the country of origin of the band
+5. when the band split
+6. the styles of the band
+
+Number 1, 4 and 6 are qualitative nominal, whereas 2, 3 and 5 are quantitative discrete variables, statistically speaking. What about the R data types? Let's call the `str()` function and take a look:
+
+```{r metal-data-type}
+str(metal)
+```
+Here again, I'm going to set the id to string. I also want to set `metal$origin` to factor, as the number of unique values is limited. Let's do the changes:
+
+```{r metal-changes}
+metal$origin <- as.factor(metal$origin)
+metal$X <- as.character(metal$X)
+str(metal)
+```
+And just like that, we're done.
+
