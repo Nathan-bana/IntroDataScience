@@ -1,0 +1,61 @@
+---
+title: "Report 3"
+author: "Nathan Bana"
+date: "(`r format(Sys.time(), '%d %B, %Y')`)"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+We will be using the `gapminder` data set from the `dslabs` package. 
+```{r packages, message=FALSE, warning=FALSE}
+library(dslabs)
+library(dplyr)
+library(knitr)
+```
+Let's filter by country and year; we are only going to look at the Switzerland and France observations starting from 1980 on:
+```{r filter}
+gapminder2 <- gapminder %>%
+  filter(country %in% c("Switzerland","France"), year>=1980)
+```
+Now, let's select a subset of the columns; we are only going to look at country, year and fertility:
+```{r select}
+gapminder2 <- gapminder2 %>% 
+  select(country, year, fertility)
+head(gapminder2)
+tail(gapminder2)
+str(gapminder2)
+```
+Now let's arrange the data by country, highest-to-lowest fertility, and year:
+```{r arrange}
+gapminder2 <- gapminder2 %>% 
+  arrange(country, desc(fertility), year)
+print(gapminder2)
+```
+We can see that in France, over the 1980 to 2015 period, fertility peaked in 2009 and has remained stable ever since. In Switzerland, over the same period, fertility has been considerably lower. We can also see that fertility has been going up, and it reached its peak in 2015. Lastly, fertility has been less variable in Switzerland than in France.
+
+Next, let's calculate the mean fertility rate for each country. Let's also calculate the standard deviation:
+```{r summarize}
+gapminder3 <- gapminder2 %>% 
+  group_by(country) %>% 
+  summarize(average_fertility=mean(fertility, na.rm=T), sd_fertility=sd(fertility, na.rm = T)) %>% 
+  arrange(average_fertility)
+print(gapminder3)
+```
+Now it is clear that over the 1980 to 2015 period, fertility has been lower on average and less variable in Switzerland than in France.
+
+Next, let's create a variation of `gapminder2` in which we remove all the observations in which there is at least one NA value:
+```{r NA}
+gapminder4 <- na.omit(gapminder2)
+str(gapminder4)
+```
+We can see that 2 observations were removed.
+
+Finally, let's join 2 datasets from the `dslabs` package, `results_us_election_2016` and `murders`:
+```{r join}
+full_join(results_us_election_2016, murders)
+```
+We could explore the relationship between the population of a state and the tendency of its citizens to vote either for Trump or Clinton.
+
+
