@@ -104,7 +104,7 @@ ggplot(gapminder2015, aes(reorder(region, fertility, na.rm = T, FUN = median), f
   )
 ```
 
-![](README_files/figure-gfm/plot1-1.png)<!-- -->
+![](README_files/figure-gfm/plot1-1.svg)<!-- -->
 
 It is clear from the plot that African countries tend to have higher
 fertility than Western countries.
@@ -168,7 +168,7 @@ ggplot(gapminder1960_2010, aes(population/10^6, life_expectancy, color = contine
   )
 ```
 
-![](README_files/figure-gfm/plot2-1.png)<!-- -->
+![](README_files/figure-gfm/plot2-1.svg)<!-- -->
 
 We can see that there does not seem to be a relationship between
 population and life expectancy. It is nevertheless interesting to see
