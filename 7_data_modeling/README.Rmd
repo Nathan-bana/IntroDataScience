@@ -38,7 +38,7 @@ gapminder2 <- gapminder %>%
 str(gapminder2)
 ```
 Now, we have what we need to create a plot of the average life expectancy by continent:
-```{r dot_plot}
+```{r dot_plot, fig.asp=148/665.95, fig.fullwidth=TRUE}
 ggplot(gapminder2, aes(life_expectancy, continent)) + 
   stat_summary(fun = mean, geom = "point") +
   scale_x_continuous(limits = c(0,90),
