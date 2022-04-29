@@ -1,0 +1,74 @@
+---
+title: "Report 7"
+author: "Nathan Bana"
+date: "(`r format(Sys.time(), '%d %B, %Y')`)"
+output: 
+  github_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, dev = "svg")
+```
+This report uses the following R packages:
+```{r packages, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(knitr)
+library(dslabs)
+```
+# Dataset
+
+We will be using the `gapminder` dataset from the `dslabs` package. This dataset contains health and income outcomes for 184 countries from 1960 to 2016. More precisely, it contains the following 9 variables:
+
+* country.
+* year.
+* infant_mortality. Infant deaths per 1000.
+* life_expectancy. Life expectancy in years.
+* fertility. Average number of children per woman.
+* population. Country population.
+* gpd. GDP according to World Bankdev.
+* continent.
+* region. Geographical region.
+
+Let's take a look at the data types:
+```{r str}
+str(gapminder)
+```
+We can see that there are 5 numeric vectors, 3 factors and 1 integer vector.
+
+# Analysis
+
+I want to explore the relationship between life expectancy and infant mortality for the year 2015. First, let's filter the `gapminder` dataset so that it only includes observations for the year 2015:
+```{r filter}
+gapminder2 <- gapminder %>%
+  filter(year==2015)
+str(gapminder2)
+```
+Let us begin by plotting life expectancy against infant mortality:
+```{r plot}
+ggplot(gapminder2, aes(infant_mortality, life_expectancy)) +
+  geom_point(size = 0.8, alpha = 0.3) +
+  geom_smooth(method = "lm", se=0) +
+  labs(x = "Infant mortality (deaths per 1000)",
+       y = "Life expectancy (years)",
+       title = "Life expectancy vs. Infant mortality (2015).",
+       subtitle = "Each data point represents a country.",
+       caption = "Source: Gapminder") +
+  theme_classic() +
+  theme(
+    axis.title.y = element_text(angle = 0, vjust = 0.5)
+  )
+```
+
+There seems to be a clear linear relationship between these 2 variables. Let's compute Pearson's *r* to quantify this relationship:
+```{r correlation}
+cor(gapminder2$infant_mortality, gapminder2$life_expectancy, use = "pairwise.complete.obs")
+```
+We see that there is a strong negative linear relationship between life expectancy and infant mortality. After all, it only makes sense that higher infant mortality would cause life expectancy to be lower, since the latter is a measure of the average time an individual is expected to live.
+
+Now, let us fit a linear model to the data, with life expectancy as the outcome and infant mortality as the predictor:
+```{r lm}
+mod <- lm(life_expectancy ~ infant_mortality, gapminder2)
+summary(mod)
+```
+According to our model, in 2015, a country is expected to lose about .3 years of life expectancy for every additional infant death per 1000. Given the R-squared value, we can also see that our model does a pretty good job, as it explains about 75% of the variance in life expectancy. 
