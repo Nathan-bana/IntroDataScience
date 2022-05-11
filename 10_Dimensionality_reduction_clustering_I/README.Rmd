@@ -1,0 +1,44 @@
+---
+title: "Report 8"
+author: "Nathan Bana"
+date: "(`r format(Sys.time(), '%d %B, %Y')`)"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, dev = "svg")
+```
+This report uses the following R packages:
+```{r packages, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(knitr)
+library(devtools)
+library(ggbiplot)
+```
+In this report we will use the famous `iris` dataset. First, let's run a PCA:
+```{r pca}
+iris.pca <- prcomp(iris[, 1:4], scale = F)
+summary(iris.pca)
+ggscreeplot(iris.pca)
+```
+
+We see that the first 2 PCs explain almost the entirety of the variance (over 97%). Therefore, we should only keep those 2. Let's run a biplot:
+```{r biplot}
+ggbiplot(iris.pca, choices = 1:2, alpha = 0.1)
+```
+
+We can clearly see 2 distinct groups of observations. We can also note that petal length and petal width are very strongly positively correlated.
+
+Next, let's add the PC scores to the original dataset:
+```{r scores}
+iris.scores <- cbind(iris, iris.pca$x[, 1:2])
+```
+Now we can plot the PCs:
+```{r plot}
+ggplot(iris.scores, aes(PC1, PC2, color = Species)) +
+  geom_point() +
+  coord_fixed() +
+  theme_classic()
+```
+
+Thanks to the coloring, we now see that there actually are 3 distinct groups of observations.
