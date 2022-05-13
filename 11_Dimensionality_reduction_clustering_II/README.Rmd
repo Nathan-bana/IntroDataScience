@@ -1,0 +1,52 @@
+---
+title: "Report 9"
+author: "Nathan Bana"
+date: "(`r format(Sys.time(), '%d %B, %Y')`)"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, dev = "svg")
+```
+This report uses the following R packages:
+```{r packages, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(knitr)
+library(purrr)
+library(cluster)
+```
+In this report we will be using the `USArrests` dataset. It contains "statistics, in arrests per 100,000 residents for assault, murder, and rape in each of the 50 US states in 1973. Also given is the percent of the population living in urban areas." (R Documentation).
+```{r data}
+kable(head(USArrests))
+str(USArrests)
+```
+Before we can run a cluster analysis, we need to scale the data:
+```{r scale}
+USArrests.scaled <- scale(USArrests)
+```
+We are almost ready to do some K-means clustering. But first, we would like to find out how many clusters we should have. To do this, we can calculate the average silhouette widths for multiple values of k, and select the value of k which maximizes the average silhouette width:
+```{r sil}
+sil_width <- map_dbl(2:10,function(k){ 
+  model <- pam(x = USArrests.scaled, k = k) 
+  model$silinfo$avg.width})
+sil_df <- data.frame( 
+  k =2:10, 
+  sil_width = sil_width
+)
+ggplot(sil_df, aes(k, sil_width)) + 
+  geom_line() + 
+  scale_x_continuous(breaks = 2:10)
+```
+
+Based on the plot, we will choose a k of 2. We are now ready to run a K-means model. We will then append the vector of cluster assignments to the original `USArrests` dataframe, and calculate the mean of each variable for each cluster:
+```{r model}
+km <- kmeans(USArrests.scaled, centers = 2)
+USArrests <- mutate(USArrests, cluster = km$cluster)
+count(USArrests, cluster) %>% kable()
+USArrests %>% 
+  group_by(cluster) %>% 
+  summarise_all(list(mean)) %>%
+  kable()
+```
+We see that cluster 2 has far more crime than cluster 1.
+
