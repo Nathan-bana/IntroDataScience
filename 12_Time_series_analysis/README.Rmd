@@ -1,0 +1,54 @@
+---
+title: "Report 10"
+author: "Nathan Bana"
+date: "(`r format(Sys.time(), '%d %B, %Y')`)"
+output: 
+  github_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, dev = "svg")
+```
+This report uses the following R packages:
+```{r packages, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(knitr)
+library(tseries)
+library(dslabs)
+```
+# Dataset
+
+We will be using the `gapminder` dataset from the `dslabs` package. This dataset contains health and income outcomes for 184 countries from 1960 to 2016. More precisely, it contains the following 9 variables:
+
+* country.
+* year.
+* infant_mortality. Infant deaths per 1000.
+* life_expectancy. Life expectancy in years.
+* fertility. Average number of children per woman.
+* population. Country population.
+* gpd. GDP according to World Bankdev.
+* continent.
+* region. Geographical region.
+
+Let's take a look at the data types:
+```{r str}
+str(gapminder)
+```
+We can see that there are 5 numeric vectors, 3 factors and 1 integer vector. For this report about time series analysis, I am only interested in the evolution of life expectancy across time in Switzerland. Let us filter the data accordingly:
+```{r filter}
+gapminder.filtered <- gapminder %>% 
+  filter(country == "Switzerland") %>% 
+  select(year, life_expectancy)
+str(gapminder.filtered)
+kable(head(gapminder.filtered))
+```
+# Analysis
+
+Now, let us create a time series object with our data and plot it:
+```{r ts}
+gapminder.ts <- ts(gapminder.filtered$life_expectancy, 1960, 2016)
+ts.plot(gapminder.ts, xlab = "Year", ylab = "Life expectancy (years)", 
+        main = "Life expectancy in Switzerland, 1960-2016")
+```
+
