@@ -1,7 +1,7 @@
 Report 10
 ================
 Nathan Bana
-(14 May, 2022)
+(15 May, 2022)
 
 -   [Dataset](#dataset)
 -   [Analysis](#analysis)
@@ -11,7 +11,6 @@ This report uses the following R packages:
 ``` r
 library(tidyverse)
 library(knitr)
-library(tseries)
 library(dslabs)
 ```
 
@@ -88,3 +87,72 @@ ts.plot(gapminder.ts, xlab = "Year", ylab = "Life expectancy (years)",
 ```
 
 ![](README_files/figure-gfm/ts-1.svg)<!-- -->
+
+We can observe that life expectancy has been steadily increasing in
+Switzerland since 1960.
+
+Now let us plot the autocorrelation:
+
+``` r
+acf(gapminder.ts)
+```
+
+![](README_files/figure-gfm/acf-1.svg)<!-- -->
+
+We can see that the autocorrelation is very positively strong overall,
+meaning that the time series is strongly dependent on its past, and that
+when life expectancy is high on any given year, it tends to be also high
+the preceding year (for lag 1).
+
+Next, let us fit the autoregressive (AR) model to our data and try to
+predict the future of our time series:
+
+``` r
+gapminder.ar <- arima(gapminder.ts, order = c(1, 0, 0))
+predict(gapminder.ar, n.ahead = 10)
+```
+
+    ## $pred
+    ## Time Series:
+    ## Start = 2017 
+    ## End = 2026 
+    ## Frequency = 1 
+    ##  [1] 83.09230 83.08462 83.07695 83.06928 83.06163 83.05398 83.04635 83.03872
+    ##  [9] 83.03111 83.02351
+    ## 
+    ## $se
+    ## Time Series:
+    ## Start = 2017 
+    ## End = 2026 
+    ## Frequency = 1 
+    ##  [1] 0.2931100 0.4142453 0.5070085 0.5850552 0.6536784 0.7155949 0.7724195
+    ##  [8] 0.8252051 0.8746836 0.9213883
+
+Hmm. The model predicts that life expectancy will go down in Switzerland
+from 2017 to 2026. It is very curious given the data that we fed it…
+
+Let us try fitting the simple moving average (MA) model to our data
+instead, and try to predict the future with that:
+
+``` r
+gapminder.ma <- arima(gapminder.ts, order = c(0, 0, 1))
+predict(gapminder.ma, n.ahead = 10)
+```
+
+    ## $pred
+    ## Time Series:
+    ## Start = 2017 
+    ## End = 2026 
+    ## Frequency = 1 
+    ##  [1] 80.26894 77.36925 77.36925 77.36925 77.36925 77.36925 77.36925 77.36925
+    ##  [9] 77.36925 77.36925
+    ## 
+    ## $se
+    ## Time Series:
+    ## Start = 2017 
+    ## End = 2026 
+    ## Frequency = 1 
+    ##  [1] 1.864542 2.614419 2.614419 2.614419 2.614419 2.614419 2.614419 2.614419
+    ##  [9] 2.614419 2.614419
+
+Well now the results are even weirder…

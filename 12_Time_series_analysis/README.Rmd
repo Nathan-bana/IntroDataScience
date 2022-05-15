@@ -14,7 +14,6 @@ This report uses the following R packages:
 ```{r packages, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(knitr)
-library(tseries)
 library(dslabs)
 ```
 # Dataset
@@ -52,3 +51,25 @@ ts.plot(gapminder.ts, xlab = "Year", ylab = "Life expectancy (years)",
         main = "Life expectancy in Switzerland, 1960-2016")
 ```
 
+We can observe that life expectancy has been steadily increasing in Switzerland since 1960.
+
+Now let us plot the autocorrelation:
+```{r acf}
+acf(gapminder.ts)
+```
+
+We can see that the autocorrelation is very positively strong overall, meaning that the time series is strongly dependent on its past, and that when life expectancy is high on any given year, it tends to be also high the preceding year (for lag 1).
+
+Next, let us fit the autoregressive (AR) model to our data and try to predict the future of our time series:
+```{r AR}
+gapminder.ar <- arima(gapminder.ts, order = c(1, 0, 0))
+predict(gapminder.ar, n.ahead = 10)
+```
+Hmm. The model predicts that life expectancy will go down in Switzerland from 2017 to 2026. It is very curious given the data that we fed it...
+
+Let us try fitting the simple moving average (MA) model to our data instead, and try to predict the future with that:
+```{r MA}
+gapminder.ma <- arima(gapminder.ts, order = c(0, 0, 1))
+predict(gapminder.ma, n.ahead = 10)
+```
+Well now the results are even weirder...
